@@ -1,0 +1,13 @@
+logging:
+  level:
+#    root: debug
+    com.amazon.opendistroforelasticsearch: debug
+    com.amazonaws.opendistro.elasticsearch: debug
+#    org.springframework.data.elasticsearch: debug
+#    com.alibaba.druid: debug
+    org.elasticsearch.client: debug
+spring:
+  elasticsearch:
+    uris: https://localhost:9200
+    password: admin
+    username: admin
