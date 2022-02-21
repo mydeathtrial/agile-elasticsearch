@@ -4,12 +4,17 @@ import cloud.agileframework.sql.SqlUtil;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOperator;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 public class TestDriver {
     public static int execut(Connection connection, String sql, Object param) {
@@ -64,5 +69,12 @@ public class TestDriver {
 //        int d = execut(con,"delete from persons6 WHERE sex is null", Maps.newHashMap());
         System.out.println(c);
         con.close();
+    }
+    
+    @Test
+    public void test2(){
+        SQLStatement select = SQLUtils.parseSingleStatement("select * from user_table a where a.age=1", DbType.mysql);
+        new SQLBinaryOpExpr(SQLUtils.toSQLExpr("A.co"), SQLBinaryOperator.Equality,SQLUtils.toSQLExpr("A.co"));
+        System.out.println(select);
     }
 }

@@ -31,7 +31,7 @@ public class ElasticsearchDaoAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RestHighLevelClient.class)
-    RestHighLevelClient restHighLevelClient() throws NoSuchAlgorithmException, KeyManagementException {
+    public RestHighLevelClient restHighLevelClient() throws NoSuchAlgorithmException, KeyManagementException {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .connectedTo(InetSocketAddress.createUnresolved("127.0.0.1", 9200))
                 .usingSsl(HttpUtil.createIgnoreVerifySSL(SSLConnectionSocketFactory.SSL))
@@ -42,12 +42,12 @@ public class ElasticsearchDaoAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ElasticsearchRestTemplate.class)
-    ElasticsearchRestTemplate elasticsearchRestTemplate(@Autowired RestHighLevelClient restHighLevelClient) {
+    public ElasticsearchRestTemplate elasticsearchRestTemplate(@Autowired RestHighLevelClient restHighLevelClient) {
         return new ElasticsearchRestTemplate(restHighLevelClient);
     }
 
     @Bean
-    ConnectionPoolDataSource connectionPoolDataSource(ElasticsearchProperties properties) {
+    public static ConnectionPoolDataSource connectionPoolDataSource(ElasticsearchProperties properties) {
         DruidDataSource dataSource = new DruidDataSource();
 
         List<URI> urls = properties.getUris().stream().map((s) -> s.startsWith("http") ? s : "http://" + s)
