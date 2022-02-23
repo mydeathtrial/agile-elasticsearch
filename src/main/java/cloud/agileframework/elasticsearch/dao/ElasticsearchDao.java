@@ -81,23 +81,25 @@ public class ElasticsearchDao implements BaseDao {
     }
 
     @Override
-    public <T> Page<T> pageBySQL(String sql, int page, int size, Class<T> clazz, Object parameters) {
+    public <T> Page<T> pageBySQL(String sql, PageRequest pageable, Class<T> clazz, Object... parameters) {
         List<T> content = Lists.newArrayList();
         long total = 0;
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
         try (Connection connection = getConnection()) {
-            content = SessionUtil.limit(connection, sql, clazz, parameters, size * (page - 1), size);
+            content = SessionUtil.limit(connection, sql, clazz, parameters[0], size * page, size);
             dictionaryManager().cover(content);
-            total = SessionUtil.count(connection, sql, parameters);
+            total = SessionUtil.count(connection, sql, parameters[0]);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new PageImpl<>(content, PageRequest.of(page - 1, size), total);
+        return new PageImpl<>(content, pageable, total);
     }
 
     @Override
-    public <T> List<T> findBySQL(String sql, Class<T> clazz, Object parameters) {
+    public <T> List<T> findBySQL(String sql, Class<T> clazz, Object... parameters) {
         try (Connection connection = getConnection()) {
-            List<T> content = SessionUtil.query(connection, sql, clazz, parameters);
+            List<T> content = SessionUtil.query(connection, sql, clazz, parameters[0]);
             dictionaryManager().cover(content);
             return content;
         } catch (SQLException e) {
@@ -107,12 +109,12 @@ public class ElasticsearchDao implements BaseDao {
     }
 
     @Override
-    public <T> List<T> findBySQL(String sql, Class<T> clazz, Integer firstResult, Integer maxResults, Object parameters) {
+    public <T> List<T> findBySQL(String sql, Class<T> clazz, Integer firstResult, Integer maxResults, Object... parameters) {
         if (maxResults <= firstResult) {
             throw new IllegalArgumentException("maxResults must Greater than or equal to firstResult");
         }
         try (Connection connection = getConnection()) {
-            List<T> content = SessionUtil.limit(connection, sql, clazz, parameters, firstResult, maxResults - firstResult);
+            List<T> content = SessionUtil.limit(connection, sql, clazz, parameters[0], firstResult, maxResults - firstResult);
             dictionaryManager().cover(content);
             return content;
         } catch (SQLException e) {
@@ -122,9 +124,9 @@ public class ElasticsearchDao implements BaseDao {
     }
 
     @Override
-    public List<Map<String, Object>> findBySQL(String sql, Object parameters) {
+    public List<Map<String, Object>> findBySQL(String sql, Object... parameters) {
         try (Connection connection = getConnection()) {
-            return SessionUtil.query(connection, sql, parameters);
+            return SessionUtil.query(connection, sql, parameters[0]);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -132,9 +134,9 @@ public class ElasticsearchDao implements BaseDao {
     }
 
     @Override
-    public int updateBySQL(String sql, Object parameters) {
+    public int updateBySQL(String sql, Object... parameters) {
         try (Connection connection = getConnection()) {
-            return SessionUtil.update(connection, sql, parameters);
+            return SessionUtil.update(connection, sql, parameters[0]);
         } catch (SQLException e) {
             e.printStackTrace();
         }
