@@ -3,6 +3,8 @@ package cloud.agileframework.elasticsearch.config;
 import cloud.agileframework.common.util.http.HttpUtil;
 import cloud.agileframework.elasticsearch.dao.ElasticsearchDao;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.google.common.collect.Lists;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,40 +32,23 @@ import java.util.stream.Collectors;
 public class ElasticsearchDaoAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(RestHighLevelClient.class)
-    public RestHighLevelClient restHighLevelClient() throws NoSuchAlgorithmException, KeyManagementException {
-        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(InetSocketAddress.createUnresolved("127.0.0.1", 9200))
-                .usingSsl(HttpUtil.createIgnoreVerifySSL(SSLConnectionSocketFactory.SSL))
-                .withBasicAuth("admin", "admin")    // 如果开启了用户名密码验证，则需要加上
-                .build();
-        return RestClients.create(clientConfiguration).rest();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ElasticsearchRestTemplate.class)
-    public ElasticsearchRestTemplate elasticsearchRestTemplate(@Autowired RestHighLevelClient restHighLevelClient) {
-        return new ElasticsearchRestTemplate(restHighLevelClient);
-    }
-
-    @Bean
     public static ConnectionPoolDataSource connectionPoolDataSource(ElasticsearchProperties properties) {
         DruidDataSource dataSource = new DruidDataSource();
 
         List<URI> urls = properties.getUris().stream().map((s) -> s.startsWith("http") ? s : "http://" + s)
                 .map(URI::create).collect(Collectors.toList());
 
-        
+
         dataSource.setUrl(String.format("jdbc:elastic://%s:%s",
                 urls.get(0).getHost(),
                 urls.get(0).getPort()));
-        if("https".equals(urls.get(0).getScheme())){
+        if ("https".equals(urls.get(0).getScheme())) {
             Properties prop = new Properties();
-            prop.put("useSSL","true");
-            prop.put("trustSelfSigned","true");
+            prop.put("useSSL", "true");
+            prop.put("trustSelfSigned", "true");
             dataSource.setConnectProperties(prop);
         }
-        
+
         dataSource.setDriverClassName("cloud.agileframework.elasticsearch.Driver"); //这个可以缺省的，会根据url自动识别
         dataSource.setUsername(properties.getUsername());
         dataSource.setPassword(properties.getPassword());
@@ -76,6 +61,34 @@ public class ElasticsearchDaoAutoConfiguration {
         dataSource.setPoolPreparedStatements(true); //缓存PreparedStatement，默认false
         dataSource.setMaxOpenPreparedStatements(20); //缓存PreparedStatement的最大数量，默认-1（不缓存）。大于0时会自动开启缓存PreparedStatement，所以可以省略上一句代码
         return dataSource;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(RestHighLevelClient.class)
+    public RestHighLevelClient restHighLevelClient(ElasticsearchProperties properties) throws NoSuchAlgorithmException, KeyManagementException {
+
+        boolean ssl = false;
+        List<InetSocketAddress> list = Lists.newArrayList();
+        for (String uriString : properties.getUris()) {
+            URI uri = URI.create(uriString);
+            list.add(InetSocketAddress.createUnresolved(uri.getHost(), uri.getPort()));
+            if ("https".equals(uri.getScheme())) {
+                ssl = true;
+            }
+        }
+
+        ClientConfiguration.MaybeSecureClientConfigurationBuilder builder = ClientConfiguration.builder().connectedTo(list.toArray(new InetSocketAddress[]{}));
+        if (ssl) {
+            builder.usingSsl(HttpUtil.createIgnoreVerifySSL(SSLConnectionSocketFactory.SSL), NoopHostnameVerifier.INSTANCE)
+                    .withBasicAuth(properties.getUsername(), properties.getPassword());
+        }
+        return RestClients.create(builder.build()).rest();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ElasticsearchRestTemplate.class)
+    public ElasticsearchRestTemplate elasticsearchRestTemplate(@Autowired RestHighLevelClient restHighLevelClient) {
+        return new ElasticsearchRestTemplate(restHighLevelClient);
     }
 
     @Bean

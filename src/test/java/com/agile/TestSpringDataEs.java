@@ -7,6 +7,7 @@ import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUpdateStatement;
+import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,8 +42,8 @@ public class TestSpringDataEs {
 
     @Test
     public void selectGroupSQL() {
-        String sql = "select count(name) from persons7 group by name,age";
-        esDao.findBySQL(sql,null);
+        String sql = "select * from persons7";
+        esDao.findBySQL(sql, Maps.newHashMap());
     }
 
     @Test
@@ -60,7 +61,7 @@ public class TestSpringDataEs {
     }
 
     @Test
-    public void update() {
+    public void update() throws NoSuchFieldException, IllegalAccessException {
         esDao.deleteAll(Persons.class);
         String id = UUID.randomUUID().toString();
         String name = "xxx";
