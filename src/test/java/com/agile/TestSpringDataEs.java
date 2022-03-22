@@ -37,7 +37,7 @@ public class TestSpringDataEs {
     @Test
     public void updateSQL() {
         String sql = "INSERT INTO persons7(name, sex, id, age,_id) VALUES ('tongmeng', true, '123', 18,'id1'),('tongmeng2', true, '123', 18,'id1')";
-        esDao.updateBySQL(sql,null);
+        esDao.updateBySQL(sql);
     }
 
     @Test

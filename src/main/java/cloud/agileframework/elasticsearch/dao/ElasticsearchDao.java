@@ -2,13 +2,14 @@ package cloud.agileframework.elasticsearch.dao;
 
 import cloud.agileframework.common.util.clazz.ClassUtil;
 import cloud.agileframework.common.util.db.SessionUtil;
-import cloud.agileframework.common.util.string.StringUtil;
 import cloud.agileframework.data.common.dao.BaseDao;
 import cloud.agileframework.data.common.dao.ColumnName;
 import cloud.agileframework.data.common.dictionary.DataExtendManager;
 import com.alibaba.druid.DbType;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Page;
@@ -74,9 +75,9 @@ public class ElasticsearchDao implements BaseDao {
             return Page.empty();
         }
 
-        List<T> content = findBySQL(toPageSQL(object, pageRequest, DbType.mysql), (Class<T>) object.getClass(), null);
+        List<T> content = findBySQL(toPageSQL(object, pageRequest, DbType.mysql), (Class<T>) object.getClass(), Maps.newHashMap());
         dictionaryManager().cover(content);
-        Long total = findOne(toPageCountSQL(object, pageRequest, DbType.mysql), long.class, null);
+        Long total = findOne(toPageCountSQL(object, pageRequest, DbType.mysql), long.class, Maps.newHashMap());
         return new PageImpl<>(content, pageRequest, total);
     }
 
@@ -87,9 +88,15 @@ public class ElasticsearchDao implements BaseDao {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         try (Connection connection = getConnection()) {
-            content = SessionUtil.limit(connection, sql, clazz, parameters[0], size * page, size);
-            dictionaryManager().cover(content);
-            total = SessionUtil.count(connection, sql, parameters[0]);
+            if (parameters == null || parameters.length == 0) {
+                content = SessionUtil.limit(connection, sql, clazz, size * page, size);
+                dictionaryManager().cover(content);
+                total = SessionUtil.count(connection, sql);
+            } else {
+                content = SessionUtil.limit(connection, sql, clazz, parameters[0], size * page, size);
+                dictionaryManager().cover(content);
+                total = SessionUtil.count(connection, sql, parameters[0]);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,6 +106,9 @@ public class ElasticsearchDao implements BaseDao {
     @Override
     public <T> List<T> findBySQL(String sql, Class<T> clazz, Object... parameters) {
         try (Connection connection = getConnection()) {
+            if (parameters == null || parameters.length == 0) {
+                return SessionUtil.query(connection, sql, clazz);
+            }
             List<T> content = SessionUtil.query(connection, sql, clazz, parameters[0]);
             dictionaryManager().cover(content);
             return content;
@@ -114,6 +124,9 @@ public class ElasticsearchDao implements BaseDao {
             throw new IllegalArgumentException("maxResults must Greater than or equal to firstResult");
         }
         try (Connection connection = getConnection()) {
+            if (parameters == null || parameters.length == 0) {
+                return SessionUtil.limit(connection, sql, clazz, firstResult, maxResults - firstResult);
+            }
             List<T> content = SessionUtil.limit(connection, sql, clazz, parameters[0], firstResult, maxResults - firstResult);
             dictionaryManager().cover(content);
             return content;
@@ -126,6 +139,9 @@ public class ElasticsearchDao implements BaseDao {
     @Override
     public List<Map<String, Object>> findBySQL(String sql, Object... parameters) {
         try (Connection connection = getConnection()) {
+            if (parameters == null || parameters.length == 0) {
+                return SessionUtil.query(connection, sql);
+            }
             return SessionUtil.query(connection, sql, parameters[0]);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,6 +152,9 @@ public class ElasticsearchDao implements BaseDao {
     @Override
     public int updateBySQL(String sql, Object... parameters) {
         try (Connection connection = getConnection()) {
+            if (parameters == null || parameters.length == 0) {
+                return SessionUtil.update(connection, sql);
+            }
             return SessionUtil.update(connection, sql, parameters[0]);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,10 +170,10 @@ public class ElasticsearchDao implements BaseDao {
             Field annotation = f.getAnnotation();
             String value = annotation.value();
             String name = annotation.name();
-            if (!StringUtil.isEmpty(value)) {
+            if (!StringUtils.isEmpty(value)) {
                 columnName.setName(value);
             }
-            if (!StringUtil.isEmpty(name)) {
+            if (!StringUtils.isEmpty(name)) {
                 columnName.setName(name);
             }
 

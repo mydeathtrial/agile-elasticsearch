@@ -8,6 +8,6 @@ logging:
     org.elasticsearch.client: debug
 spring:
   elasticsearch:
-    uris: http://10.66.77.116:9200
+    uris: https://node-0.example.com:9200
     password: admin
     username: admin
