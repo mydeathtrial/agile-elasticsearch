@@ -23,7 +23,7 @@ import org.springframework.data.elasticsearch.repository.support.MappingElastics
 import org.springframework.data.elasticsearch.repository.support.SimpleElasticsearchRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import javax.sql.ConnectionPoolDataSource;
+import javax.sql.PooledConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -33,14 +33,14 @@ import java.util.stream.Collectors;
 public class ElasticsearchDao implements BaseDao {
     private final ElasticsearchRestTemplate restTemplate;
 
-    private final ConnectionPoolDataSource connectionPoolDataSource;
+    private final PooledConnection pooledConnection;
 
     @Autowired
     private DataExtendManager dataExtendManager;
 
-    public ElasticsearchDao(ElasticsearchRestTemplate restTemplate, ConnectionPoolDataSource connectionPoolDataSource) {
+    public ElasticsearchDao(ElasticsearchRestTemplate restTemplate, PooledConnection pooledConnection) {
         this.restTemplate = restTemplate;
-        this.connectionPoolDataSource = connectionPoolDataSource;
+        this.pooledConnection = pooledConnection;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ElasticsearchDao implements BaseDao {
     @SneakyThrows
     @Override
     public Connection getConnection() {
-        return connectionPoolDataSource.getPooledConnection().getConnection();
+        return pooledConnection.getConnection();
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -181,10 +182,14 @@ public class TestSpringDataEs {
      */
     @Test
     public void pageBySQL() throws InterruptedException {
-        saveBatch();
-        Page<Persons> page = esDao.pageBySQL("select * from persons7 where sex = #{sex}", 1, 100, Persons.class, Persons.builder().sex(true).build());
-        Assertions.assertEquals(page.getTotalElements(),100);
-        Assertions.assertEquals(page.getContent().size(),100);
-        Assertions.assertEquals(page.getTotalPages(), 1);
+        AtomicInteger count = new AtomicInteger();
+       IntStream.range(0,1000).forEach(i->{
+//           new Thread(()->{
+               Page<Persons> data = esDao.pageBySQL("select * from persons7 where sex = #{sex}", 1, 100, Persons.class, Persons.builder().sex(true).build());
+               System.out.println("-------cha--------"+data.getTotalElements());
+//           }).start();
+           count.getAndIncrement();
+       });
+//       Thread.sleep(40000);
     }
 }

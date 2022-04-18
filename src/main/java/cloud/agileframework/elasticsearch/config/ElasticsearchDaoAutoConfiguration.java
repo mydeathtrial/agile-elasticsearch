@@ -18,11 +18,12 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
-import javax.sql.ConnectionPoolDataSource;
+import javax.sql.PooledConnection;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 public class ElasticsearchDaoAutoConfiguration {
 
     @Bean
-    public static ConnectionPoolDataSource connectionPoolDataSource(ElasticsearchProperties properties) {
+    public static PooledConnection connectionPoolDataSource(ElasticsearchProperties properties) throws SQLException {
         DruidDataSource dataSource = new DruidDataSource();
 
         List<URI> urls = properties.getUris().stream().map((s) -> s.startsWith("http") ? s : "http://" + s)
@@ -60,7 +61,7 @@ public class ElasticsearchDaoAutoConfiguration {
         dataSource.setMaxWait(2000);  //获取连接的最大等待时间，单位毫秒
         dataSource.setPoolPreparedStatements(true); //缓存PreparedStatement，默认false
         dataSource.setMaxOpenPreparedStatements(20); //缓存PreparedStatement的最大数量，默认-1（不缓存）。大于0时会自动开启缓存PreparedStatement，所以可以省略上一句代码
-        return dataSource;
+        return dataSource.getPooledConnection();
     }
 
     @Bean
@@ -92,7 +93,7 @@ public class ElasticsearchDaoAutoConfiguration {
     }
 
     @Bean
-    public ElasticsearchDao elasticsearchDao(ElasticsearchRestTemplate restTemplate, ConnectionPoolDataSource connectionPoolDataSource) {
-        return new ElasticsearchDao(restTemplate, connectionPoolDataSource);
+    public ElasticsearchDao elasticsearchDao(ElasticsearchRestTemplate restTemplate, PooledConnection pooledConnection) {
+        return new ElasticsearchDao(restTemplate, pooledConnection);
     }
 }
