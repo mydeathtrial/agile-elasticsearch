@@ -1,74 +1,334 @@
 package cloud.agileframework.elasticsearch;
 
-import cloud.agileframework.elasticsearch.protocol.EnhanceProtocol;
 import cloud.agileframework.elasticsearch.proxy.JdbcRequest;
 import cloud.agileframework.elasticsearch.proxy.JdbcResponse;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
-import com.amazon.opendistroforelasticsearch.jdbc.PreparedStatementImpl;
-import com.amazon.opendistroforelasticsearch.jdbc.logging.Logger;
-import com.amazon.opendistroforelasticsearch.jdbc.protocol.exceptions.ResponseException;
-import com.google.common.collect.Lists;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
-import java.util.List;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
 
-public class AgilePreparedStatement extends PreparedStatementImpl {
-    private final ConnectionEnhanceImpl connection;
-    private final List<SQLStatement> batch = Lists.newArrayList();
-    
-    public AgilePreparedStatement(ConnectionEnhanceImpl connection, String sql, Logger log) throws SQLException {
-        super(connection, sql, log);
-        this.connection = connection;
+public class AgilePreparedStatement extends AgileStatement implements PreparedStatement {
+    private String sql;
+
+    public AgilePreparedStatement(ConnectionEnhanceImpl connection) {
+        super(connection);
+    }
+
+    public AgilePreparedStatement(ConnectionEnhanceImpl connection, String sql) {
+        super(connection);
+        this.sql = sql;
+    }
+
+
+    @Override
+    public ResultSet executeQuery() throws SQLException {
+        checkOpen();
+        JdbcResponse result;
+        try {
+            result = JdbcRequest.send(sql, this);
+        } catch (IOException e) {
+            throw new SQLException(e);
+        }
+        return result.resultSet();
+        
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        // JDBC Spec: A ResultSet object is automatically closed when the Statement
-        // object that generated it is closed, re-executed, or used to retrieve the
-        // next result from a sequence of multiple results.
-        closeResultSet(false);
-
+        checkOpen();
+        JdbcResponse result;
         try {
-            JdbcResponse response = ((EnhanceProtocol) (connection.getProtocol())).executeUpdate(JdbcRequest.of(sql));
-            return response.count();
-
-        } catch (ResponseException | IOException ex) {
-            logAndThrowSQLException(log, new SQLException("Error executing query", ex));
+            result = JdbcRequest.send(sql, this);
+        } catch (IOException e) {
+            throw new SQLException(e);
         }
-        return 0;
+        return result.count();
     }
 
     @Override
-    public int[] executeBatch() throws SQLException {
-        // JDBC Spec: A ResultSet object is automatically closed when the Statement
-        // object that generated it is closed, re-executed, or used to retrieve the
-        // next result from a sequence of multiple results.
-        closeResultSet(false);
+    public void setNull(int parameterIndex, int sqlType) throws SQLException {
 
-        try {
-            JdbcResponse response = ((EnhanceProtocol) (connection.getProtocol())).executeUpdate(JdbcRequest.of(batch));
-            return response.counts();
-
-        } catch (ResponseException | IOException ex) {
-            logAndThrowSQLException(log, new SQLException("Error executing query", ex));
-        }
-        clearBatch();
-        return new int[0];
     }
 
     @Override
-    public void addBatch(String sql) throws SQLException {
-        SQLStatement statement = JdbcRequest.to(sql);
-        if (statement instanceof SQLInsertStatement) {
-            batch.add(statement);
-        }
-        super.addBatch(sql);
+    public void setBoolean(int parameterIndex, boolean x) throws SQLException {
+
     }
 
     @Override
-    public void clearBatch() {
-        batch.clear();
+    public void setByte(int parameterIndex, byte x) throws SQLException {
+
+    }
+
+    @Override
+    public void setShort(int parameterIndex, short x) throws SQLException {
+
+    }
+
+    @Override
+    public void setInt(int parameterIndex, int x) throws SQLException {
+
+    }
+
+    @Override
+    public void setLong(int parameterIndex, long x) throws SQLException {
+
+    }
+
+    @Override
+    public void setFloat(int parameterIndex, float x) throws SQLException {
+
+    }
+
+    @Override
+    public void setDouble(int parameterIndex, double x) throws SQLException {
+
+    }
+
+    @Override
+    public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
+
+    }
+
+    @Override
+    public void setString(int parameterIndex, String x) throws SQLException {
+
+    }
+
+    @Override
+    public void setBytes(int parameterIndex, byte[] x) throws SQLException {
+
+    }
+
+    @Override
+    public void setDate(int parameterIndex, Date x) throws SQLException {
+
+    }
+
+    @Override
+    public void setTime(int parameterIndex, Time x) throws SQLException {
+
+    }
+
+    @Override
+    public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
+
+    }
+
+    @Override
+    public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
+
+    }
+
+    @Override
+    public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
+
+    }
+
+    @Override
+    public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
+
+    }
+
+    @Override
+    public void clearParameters() throws SQLException {
+
+    }
+
+    @Override
+    public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
+
+    }
+
+    @Override
+    public void setObject(int parameterIndex, Object x) throws SQLException {
+
+    }
+
+    @Override
+    public boolean execute() throws SQLException {
+        return false;
+    }
+
+    @Override
+    public void addBatch() throws SQLException {
+
+    }
+
+    @Override
+    public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException {
+
+    }
+
+    @Override
+    public void setRef(int parameterIndex, Ref x) throws SQLException {
+
+    }
+
+    @Override
+    public void setBlob(int parameterIndex, Blob x) throws SQLException {
+
+    }
+
+    @Override
+    public void setClob(int parameterIndex, Clob x) throws SQLException {
+
+    }
+
+    @Override
+    public void setArray(int parameterIndex, Array x) throws SQLException {
+
+    }
+
+    @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void setDate(int parameterIndex, Date x, Calendar cal) throws SQLException {
+
+    }
+
+    @Override
+    public void setTime(int parameterIndex, Time x, Calendar cal) throws SQLException {
+
+    }
+
+    @Override
+    public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal) throws SQLException {
+
+    }
+
+    @Override
+    public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException {
+
+    }
+
+    @Override
+    public void setURL(int parameterIndex, URL x) throws SQLException {
+
+    }
+
+    @Override
+    public ParameterMetaData getParameterMetaData() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void setRowId(int parameterIndex, RowId x) throws SQLException {
+
+    }
+
+    @Override
+    public void setNString(int parameterIndex, String value) throws SQLException {
+
+    }
+
+    @Override
+    public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setNClob(int parameterIndex, NClob value) throws SQLException {
+
+    }
+
+    @Override
+    public void setClob(int parameterIndex, Reader reader, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
+
+    }
+
+    @Override
+    public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
+
+    }
+
+    @Override
+    public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
+
+    }
+
+    @Override
+    public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
+
+    }
+
+    @Override
+    public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
+
+    }
+
+    @Override
+    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
+
+    }
+
+    @Override
+    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
+
+    }
+
+    @Override
+    public void setClob(int parameterIndex, Reader reader) throws SQLException {
+
+    }
+
+    @Override
+    public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
+
+    }
+
+    @Override
+    public void setNClob(int parameterIndex, Reader reader) throws SQLException {
+
     }
 }

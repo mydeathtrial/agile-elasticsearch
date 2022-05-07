@@ -65,7 +65,7 @@ public class WhereSQLUtil {
                 case Equality:
                     temp = "{\n" +
                             "    \"term\": {\n" +
-                            "        \"$_Key_\": {\n" +
+                            "        \"$_Key_.keyword\": {\n" +
                             "            \"value\": $_Value_\n" +
                             "        }\n" +
                             "    }\n" +

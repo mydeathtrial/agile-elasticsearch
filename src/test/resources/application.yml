@@ -6,6 +6,7 @@ logging:
 #    org.springframework.data.elasticsearch: debug
 #    com.alibaba.druid: debug
     org.elasticsearch.client: debug
+    cloud.agileframework.elasticsearch.proxy.JdbcRequest: debug
 spring:
   elasticsearch:
     uris: https://127.0.0.1:9200

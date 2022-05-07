@@ -3,10 +3,6 @@ package com.agile;
 import cloud.agileframework.elasticsearch.config.ElasticsearchDaoAutoConfiguration;
 import cloud.agileframework.elasticsearch.dao.ElasticsearchDao;
 import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.SQLUtils;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
-import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUpdateStatement;
 import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,6 +41,9 @@ public class TestSpringDataEs {
     public void selectGroupSQL() {
         String sql = "select * from persons7";
         esDao.findBySQL(sql, Maps.newHashMap());
+
+        String sql2 = "select a.* from persons7 as a left join persons7 as b on a.id = b.id";
+        esDao.findBySQL(sql2, Maps.newHashMap());
     }
 
     @Test
@@ -95,7 +94,7 @@ public class TestSpringDataEs {
                 .age(11)
                 .build());
 
-        Assertions.assertEquals(esDao.findOne("select name from persons7 where id = ${id}",String.class,Persons.builder().id(id).build()), name);
+        Assertions.assertEquals(esDao.findOne("select name from persons7 where id = #{id}",String.class,Persons.builder().id(id).build()), name);
     }
 
     @Test
@@ -148,7 +147,7 @@ public class TestSpringDataEs {
     @Test
     public void test() throws InterruptedException {
         saveBatch();
-        Page<Persons> page = esDao.page(Persons.builder().sex(true).build(), 1, 10);
+        Page<Persons> page = esDao.page(Persons.builder().sex(true).build(), 2, 10);
         Assertions.assertNotNull(page);
         Assertions.assertTrue(page.getTotalElements() > 0);
         Assertions.assertTrue(page.getTotalPages() > 0);

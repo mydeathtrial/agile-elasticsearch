@@ -1,62 +1,75 @@
 package cloud.agileframework.elasticsearch;
 
-import cloud.agileframework.elasticsearch.protocol.EnhanceProtocol;
 import cloud.agileframework.elasticsearch.proxy.JdbcRequest;
 import cloud.agileframework.elasticsearch.proxy.JdbcResponse;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
-import com.amazon.opendistroforelasticsearch.jdbc.StatementImpl;
-import com.amazon.opendistroforelasticsearch.jdbc.logging.Logger;
-import com.amazon.opendistroforelasticsearch.jdbc.protocol.exceptions.ResponseException;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AgileStatement extends StatementImpl {
-    private final ConnectionEnhanceImpl connection;
+public class AgileStatement extends BaseStatement {
     private final List<SQLStatement> batch = Lists.newArrayList();
 
-    public AgileStatement(ConnectionEnhanceImpl connection, Logger log) {
-        super(connection, log);
-        this.connection = connection;
+    public AgileStatement(ConnectionEnhanceImpl connection) {
+        super(connection);
+    }
+
+    public List<SQLStatement> getBatch() {
+        return batch;
     }
 
     @Override
     public int executeUpdate(String sql) throws SQLException {
-
-        // JDBC Spec: A ResultSet object is automatically closed when the Statement
-        // object that generated it is closed, re-executed, or used to retrieve the
-        // next result from a sequence of multiple results.
-        closeResultSet(false);
-
+        checkOpen();
+        JdbcResponse result;
         try {
-            JdbcResponse response = ((EnhanceProtocol) (connection.getProtocol())).executeUpdate(JdbcRequest.of(sql));
-            return response.count();
-
-        } catch (ResponseException | IOException ex) {
-            logAndThrowSQLException(log, new SQLException("Error executing query", ex));
+            result = JdbcRequest.send(sql, this);
+        } catch (IOException e) {
+            throw new SQLException(e);
         }
-        return 0;
+        return result.count();
+    }
+
+    @Override
+    public boolean execute(String sql) throws SQLException {
+        checkOpen();
+        JdbcResponse result;
+        try {
+            result = JdbcRequest.send(sql, this);
+        } catch (IOException e) {
+            throw new SQLException(e);
+        }
+        return result.success();
+    }
+
+
+    @Override
+    public ResultSet executeQuery(String sql) throws SQLException {
+        checkOpen();
+        JdbcResponse result;
+        try {
+            result = JdbcRequest.send(sql, this);
+        } catch (IOException e) {
+            throw new SQLException(e);
+        }
+        return result.resultSet();
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        // JDBC Spec: A ResultSet object is automatically closed when the Statement
-        // object that generated it is closed, re-executed, or used to retrieve the
-        // next result from a sequence of multiple results.
-        closeResultSet(false);
-
+        checkOpen();
+        JdbcResponse result;
         try {
-            JdbcResponse response = ((EnhanceProtocol) (connection.getProtocol())).executeUpdate(JdbcRequest.of(batch));
-            return response.counts();
-
-        } catch (ResponseException | IOException ex) {
-            logAndThrowSQLException(log, new SQLException("Error executing query", ex));
+            result = JdbcRequest.of(batch, this).send();
+        } catch (IOException e) {
+            throw new SQLException(e);
         }
         clearBatch();
-        return new int[0];
+        return result.counts();
     }
 
     @Override
@@ -64,13 +77,17 @@ public class AgileStatement extends StatementImpl {
         SQLStatement statement = JdbcRequest.to(sql);
         if (statement instanceof SQLInsertStatement) {
             batch.add(statement);
-            return;
         }
-        super.addBatch(sql);
     }
 
     @Override
     public void clearBatch() {
         batch.clear();
+    }
+
+    protected void checkOpen() throws SQLException {
+        if (!getConnection().getRestClient().isRunning()) {
+            throw new SQLException("statement is closed");
+        }
     }
 }

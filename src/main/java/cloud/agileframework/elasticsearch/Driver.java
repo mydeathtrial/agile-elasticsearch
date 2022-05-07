@@ -1,16 +1,29 @@
 package cloud.agileframework.elasticsearch;
 
-import com.amazon.opendistroforelasticsearch.jdbc.config.ConnectionConfig;
-import com.amazon.opendistroforelasticsearch.jdbc.internal.util.UrlParser;
-import com.amazon.opendistroforelasticsearch.jdbc.logging.Logger;
-import com.amazon.opendistroforelasticsearch.jdbc.logging.NoOpLogger;
 
+import cloud.agileframework.common.util.http.HttpUtil;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.elasticsearch.client.ClientConfiguration;
+import org.springframework.data.elasticsearch.client.RestClients;
+
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
-public class Driver extends com.amazon.opendistroforelasticsearch.jdbc.Driver implements java.sql.Driver {
+public class Driver implements java.sql.Driver {
+    private static Logger log = LoggerFactory.getLogger(Driver.class);
     public static final String URL_PREFIX = "jdbc:elastic://";
 
     //
@@ -31,37 +44,51 @@ public class Driver extends com.amazon.opendistroforelasticsearch.jdbc.Driver im
 
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
-        url = url.replace(URL_PREFIX, UrlParser.URL_PREFIX);
-        ConnectionConfig connectionConfig = ConnectionConfig.builder()
-                .setUrl(url)
-                .setProperties(info)
-                .build();
-        Logger log = initLog(connectionConfig);
-        log.debug(String.format("connect (%s, %s)", url, info == null ? "null" : info.toString()));
-        log.debug(String.format("Opening connection using config: %s", connectionConfig));
-        return new ConnectionEnhanceImpl(connectionConfig, log);
+        List<URI> urls = Arrays.stream(url.split(",")).map((s) -> s.startsWith("http") ? s : "http://" + s)
+                .map(URI::create)
+                .collect(Collectors.toList());
+        InetSocketAddress[] inetSocketAddresses = urls.stream().map(a -> InetSocketAddress.createUnresolved(a.getHost(), a.getPort())).toArray(InetSocketAddress[]::new);
+
+        ClientConfiguration.MaybeSecureClientConfigurationBuilder builder = ClientConfiguration.builder()
+                .connectedTo(inetSocketAddresses);
+
+        if ("https".equals(urls.get(0).getScheme())) {
+            try {
+                builder.usingSsl(HttpUtil.createIgnoreVerifySSL(SSLConnectionSocketFactory.SSL), NoopHostnameVerifier.INSTANCE)
+                        .withBasicAuth(info.getProperty("user"), info.getProperty("password")).build();
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        return new ConnectionEnhanceImpl(RestClients.create(builder.build()).lowLevelRest(),
+                url,
+                info);
+    }
+    
+    @Override
+    public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+        // TODO - implement this?
+        return new DriverPropertyInfo[0];
     }
 
-    static Logger initLog(ConnectionConfig connectionConfig) {
-        // precedence:
-        // 1. explicitly supplied logWriter
-        // 2. logOutput property
-        // 3. DriverManager logWriter
-        if (connectionConfig.getLogWriter() != null) {
+    @Override
+    public int getMajorVersion() {
+        return 1;
+    }
 
-            return com.amazon.opendistroforelasticsearch.jdbc.logging.LoggerFactory.getLogger(connectionConfig.getLogWriter(), connectionConfig.getLogLevel());
+    @Override
+    public int getMinorVersion() {
+        return 1;
+    }
 
-        } else if (connectionConfig.getLogOutput() != null) {
+    @Override
+    public boolean jdbcCompliant() {
+        return false;
+    }
 
-            return com.amazon.opendistroforelasticsearch.jdbc.logging.LoggerFactory.getLogger(connectionConfig.getLogOutput(), connectionConfig.getLogLevel());
-
-        } else if (DriverManager.getLogWriter() != null) {
-
-            return com.amazon.opendistroforelasticsearch.jdbc.logging.LoggerFactory.getLogger(DriverManager.getLogWriter(), connectionConfig.getLogLevel());
-
-        } else {
-
-            return NoOpLogger.INSTANCE;
-        }
+    @Override
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 }

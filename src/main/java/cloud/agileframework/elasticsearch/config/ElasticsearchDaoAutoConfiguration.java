@@ -18,50 +18,32 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
-import javax.sql.PooledConnection;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 @EnableConfigurationProperties({ElasticsearchProperties.class, ReactiveElasticsearchRestClientProperties.class})
 @Configuration
 public class ElasticsearchDaoAutoConfiguration {
 
-    @Bean
-    public static PooledConnection connectionPoolDataSource(ElasticsearchProperties properties) throws SQLException {
+    public static DruidDataSource connectionPoolDataSource(ElasticsearchProperties properties) {
         DruidDataSource dataSource = new DruidDataSource();
 
-        List<URI> urls = properties.getUris().stream().map((s) -> s.startsWith("http") ? s : "http://" + s)
-                .map(URI::create).collect(Collectors.toList());
-
-
-        dataSource.setUrl(String.format("jdbc:elastic://%s:%s",
-                urls.get(0).getHost(),
-                urls.get(0).getPort()));
-        if ("https".equals(urls.get(0).getScheme())) {
-            Properties prop = new Properties();
-            prop.put("useSSL", "true");
-            prop.put("trustSelfSigned", "true");
-            dataSource.setConnectProperties(prop);
-        }
-
+        dataSource.setUrl(String.join(",", properties.getUris()));
         dataSource.setDriverClassName("cloud.agileframework.elasticsearch.Driver"); //这个可以缺省的，会根据url自动识别
         dataSource.setUsername(properties.getUsername());
         dataSource.setPassword(properties.getPassword());
         //下面都是可选的配置
-        dataSource.setValidationQuery("SHOW tables LIKE %");
+//        dataSource.setValidationQuery("select 1");
         dataSource.setInitialSize(10);  //初始连接数，默认0
         dataSource.setMaxActive(30);  //最大连接数，默认8
         dataSource.setMinIdle(10);  //最小闲置数
         dataSource.setMaxWait(2000);  //获取连接的最大等待时间，单位毫秒
         dataSource.setPoolPreparedStatements(true); //缓存PreparedStatement，默认false
         dataSource.setMaxOpenPreparedStatements(20); //缓存PreparedStatement的最大数量，默认-1（不缓存）。大于0时会自动开启缓存PreparedStatement，所以可以省略上一句代码
-        return dataSource.getPooledConnection();
+        return dataSource;
     }
 
     @Bean
@@ -93,7 +75,7 @@ public class ElasticsearchDaoAutoConfiguration {
     }
 
     @Bean
-    public ElasticsearchDao elasticsearchDao(ElasticsearchRestTemplate restTemplate, PooledConnection pooledConnection) {
-        return new ElasticsearchDao(restTemplate, pooledConnection);
+    public ElasticsearchDao elasticsearchDao(ElasticsearchRestTemplate restTemplate, ElasticsearchProperties properties) {
+        return new ElasticsearchDao(restTemplate, connectionPoolDataSource(properties));
     }
 }

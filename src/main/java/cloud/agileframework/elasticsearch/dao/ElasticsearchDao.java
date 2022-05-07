@@ -6,6 +6,7 @@ import cloud.agileframework.data.common.dao.BaseDao;
 import cloud.agileframework.data.common.dao.ColumnName;
 import cloud.agileframework.data.common.dictionary.DataExtendManager;
 import com.alibaba.druid.DbType;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
@@ -23,7 +24,6 @@ import org.springframework.data.elasticsearch.repository.support.MappingElastics
 import org.springframework.data.elasticsearch.repository.support.SimpleElasticsearchRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import javax.sql.PooledConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -33,14 +33,14 @@ import java.util.stream.Collectors;
 public class ElasticsearchDao implements BaseDao {
     private final ElasticsearchRestTemplate restTemplate;
 
-    private final PooledConnection pooledConnection;
+    private final DruidDataSource dataSource;
 
     @Autowired
     private DataExtendManager dataExtendManager;
 
-    public ElasticsearchDao(ElasticsearchRestTemplate restTemplate, PooledConnection pooledConnection) {
+    public ElasticsearchDao(ElasticsearchRestTemplate restTemplate, DruidDataSource dataSource) {
         this.restTemplate = restTemplate;
-        this.pooledConnection = pooledConnection;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ElasticsearchDao implements BaseDao {
     @SneakyThrows
     @Override
     public Connection getConnection() {
-        return pooledConnection.getConnection();
+        return dataSource.getConnection();
     }
 
     @Override
@@ -204,4 +204,13 @@ public class ElasticsearchDao implements BaseDao {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public <T> boolean update(T o) throws NoSuchFieldException, IllegalAccessException {
+        String sql = toUpdateSql(o, DbType.mysql);
+        int count = updateBySQL(sql);
+        return count != 0;
+    }
+    
+    
 }

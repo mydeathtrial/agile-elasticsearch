@@ -4,6 +4,7 @@ import cloud.agileframework.common.util.clazz.ClassUtil;
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.object.ObjectUtil;
 import cloud.agileframework.common.util.stream.StreamUtil;
+import cloud.agileframework.elasticsearch.BaseStatement;
 import com.alibaba.druid.sql.ast.SQLStatement;
 
 import java.io.InputStream;
@@ -44,9 +45,13 @@ public interface SqlParseProvider<P extends JdbcResponse, S extends SQLStatement
         return ((Class<?>) clazz).isAssignableFrom(statement.getClass());
     }
 
-    default P toResponse(InputStream contentStream) {
+    default P toResponse(BaseStatement statement,InputStream contentStream) {
         Type clazz = ClassUtil.getGeneric(getClass(), SqlParseProvider.class, 0);
         TypeReference<P> toClass = new TypeReference<>(clazz);
-        return ObjectUtil.to(StreamUtil.toString(contentStream), toClass);
+        P r = ObjectUtil.to(StreamUtil.toString(contentStream), toClass);
+        if(r instanceof BaseResponse){
+            ((BaseResponse)r).setStatement(statement);
+        }
+        return r;
     }
 }
