@@ -16,7 +16,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Document(indexName = "persons7")
 public class Persons {
     @Id
-    @Field(type = FieldType.Text, index = false, store = true)
+    @Field(type = FieldType.Keyword, index = false, store = true)
     private String id;
     @Field(type = FieldType.Integer, index = false, store = true)
     private Integer age;
