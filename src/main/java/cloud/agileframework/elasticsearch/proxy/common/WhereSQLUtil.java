@@ -111,7 +111,7 @@ public class WhereSQLUtil {
                     value = value.replace("%", "*");
                     temp = "{\n" +
                             "    \"wildcard\": {\n" +
-                            "        \"$_Key_\": $_Value_\n" +
+                            "        \"$_Key_.keyword\": $_Value_\n" +
                             "    }\n" +
                             "}";
                     break;
