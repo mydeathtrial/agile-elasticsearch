@@ -73,6 +73,7 @@ public enum ElasticsearchType {
     NESTED(JDBCType.STRUCT, null, 0, 0, false),
     OBJECT(JDBCType.STRUCT, null, 0, 0, false),
     DATE(JDBCType.DATE, Date.class, 24, 24, false),
+    DATETIME(JDBCType.DATE, Date.class, 24, 24, false),
     TIME(JDBCType.TIME, Time.class, 24, 24, false),
     TIMESTAMP(JDBCType.TIMESTAMP, Timestamp.class, 24, 24, false),
     BINARY(JDBCType.VARBINARY, String.class, Integer.MAX_VALUE, 0, false),
