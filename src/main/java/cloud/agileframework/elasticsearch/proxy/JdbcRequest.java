@@ -35,14 +35,14 @@ import java.util.Vector;
 public class JdbcRequest {
     private static Logger logger = LoggerFactory.getLogger(JdbcRequest.class);
     @Builder.Default
-    private static Set<SqlParseProvider<?, ?>> handlers = Sets.newHashSet(
+    private static final SqlParseProvider[] handlers = new SqlParseProvider[]{
             new SelectHandler(),
             new OpendistroSelectHandler(),
             new CreateHandler(),
             new InsertHandler(),
             new UpdateHandler(),
             new DeleteHandler(),
-            new BatchHandler());
+            new BatchHandler()};
     private String url;
     private RequestMethod method;
     private String body;

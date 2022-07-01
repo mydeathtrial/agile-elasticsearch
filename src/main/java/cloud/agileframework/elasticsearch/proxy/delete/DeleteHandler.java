@@ -17,7 +17,7 @@ public class DeleteHandler implements SqlParseProvider<DeleteResponse, SQLDelete
         String index = statement.getTableName().toString();
 
         JSONObject body = new JSONObject();
-        body.put("query", WhereSQLUtil.to(this, where));
+        body.put("query", WhereSQLUtil.to(where));
         return JdbcRequest.builder()
                 .handler(this)
                 .method(RequestMethod.POST)

@@ -15,12 +15,12 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.stream.Collectors;
 
 public class WhereSQLUtil {
-    public static JSONObject to(SqlParseProvider handler, SQLExpr op) throws SQLFeatureNotSupportedException {
-        if(op == null){
+    public static JSONObject to(SQLExpr op) throws SQLFeatureNotSupportedException {
+        if (op == null) {
             return null;
         }
         if (op instanceof SQLBinaryOpExpr) {
-            return toSQLBinaryOpExpr(handler, (SQLBinaryOpExpr) op);
+            return toSQLBinaryOpExpr((SQLBinaryOpExpr) op);
         } else if (op instanceof SQLInListExpr) {
             return toSQLInListExpr((SQLInListExpr) op);
         } else if (op instanceof SQLBetweenExpr) {
@@ -30,15 +30,15 @@ public class WhereSQLUtil {
         }
     }
 
-    public static JSONObject toSQLBinaryOpExpr(SqlParseProvider handler, SQLBinaryOpExpr op) throws SQLFeatureNotSupportedException {
+    public static JSONObject toSQLBinaryOpExpr(SQLBinaryOpExpr op) throws SQLFeatureNotSupportedException {
         JSONObject node = new JSONObject();
         if (SQLBinaryOperator.BooleanAnd == op.getOperator()) {
             //And
             JSONObject bool = new JSONObject();
             JSONArray must = new JSONArray();
             node.put("bool", bool);
-            must.add(to(handler, op.getLeft()));
-            must.add(to(handler, op.getRight()));
+            must.add(to(op.getLeft()));
+            must.add(to(op.getRight()));
             bool.put("must", must);
 
         } else if (SQLBinaryOperator.BooleanOr == op.getOperator()) {
@@ -46,16 +46,16 @@ public class WhereSQLUtil {
             JSONObject bool = new JSONObject();
             JSONArray must = new JSONArray();
             node.put("bool", bool);
-            must.add(to(handler, op.getLeft()));
-            must.add(to(handler, op.getRight()));
+            must.add(to(op.getLeft()));
+            must.add(to(op.getRight()));
             bool.put("should", must);
         } else if (SQLBinaryOperator.NotEqual == op.getOperator() || SQLBinaryOperator.LessThanOrGreater == op.getOperator()) {
             //Or
             JSONObject bool = new JSONObject();
             JSONArray must = new JSONArray();
             node.put("bool", bool);
-            must.add(to(handler, op.getLeft()));
-            must.add(to(handler, op.getRight()));
+            must.add(to(op.getLeft()));
+            must.add(to(op.getRight()));
             bool.put("must_not", must);
         } else {
             String column = SQLUtils.toSQLString(op.getLeft());

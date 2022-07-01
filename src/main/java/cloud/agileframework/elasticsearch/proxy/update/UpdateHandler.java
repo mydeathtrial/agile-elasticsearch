@@ -23,7 +23,7 @@ public class UpdateHandler implements SqlParseProvider<UpdateResponse, SQLUpdate
 
         JSONObject body = new JSONObject();
         body.put("script", to(statement.getItems()));
-        body.put("query", WhereSQLUtil.to(this, where));
+        body.put("query", WhereSQLUtil.to(where));
         return JdbcRequest.builder()
                 .handler(this)
                 .method(RequestMethod.POST)
