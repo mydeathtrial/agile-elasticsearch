@@ -6,7 +6,7 @@ import cloud.agileframework.elasticsearch.proxy.SqlParseProvider;
 import cloud.agileframework.elasticsearch.proxy.common.WhereSQLUtil;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.expr.*;
+import com.alibaba.druid.sql.ast.expr.SQLValuableExpr;
 import com.alibaba.druid.sql.ast.statement.SQLUpdateSetItem;
 import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
 import com.alibaba.fastjson.JSONObject;
@@ -45,7 +45,7 @@ public class UpdateHandler implements SqlParseProvider<UpdateResponse, SQLUpdate
         items.forEach(item -> {
             String column = SQLUtils.toSQLString(item.getColumn());
             SQLExpr v = item.getValue();
-            Object value = v instanceof SQLValuableExpr?((SQLValuableExpr) v).getValue():SQLUtils.toSQLString(v);
+            Object value = v instanceof SQLValuableExpr ? ((SQLValuableExpr) v).getValue() : SQLUtils.toSQLString(v);
             params.put(column, value);
         });
         script.put("params", params);

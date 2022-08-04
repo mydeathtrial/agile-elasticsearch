@@ -2,9 +2,6 @@ package cloud.agileframework.elasticsearch;
 
 import cloud.agileframework.elasticsearch.proxy.JdbcRequest;
 import cloud.agileframework.elasticsearch.proxy.JdbcResponse;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +11,6 @@ import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.ParameterMetaData;
@@ -52,7 +48,7 @@ public class AgilePreparedStatement extends AgileStatement implements PreparedSt
             throw new SQLException(e);
         }
         return result.resultSet();
-        
+
     }
 
     @Override

@@ -1,6 +1,5 @@
 package cloud.agileframework.elasticsearch.proxy.common;
 
-import cloud.agileframework.elasticsearch.proxy.SqlParseProvider;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBetweenExpr;

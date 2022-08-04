@@ -1,10 +1,10 @@
 logging:
   level:
-#    root: debug
+    #    root: debug
     com.amazon.opendistroforelasticsearch: debug
     com.amazonaws.opendistro.elasticsearch: debug
-#    org.springframework.data.elasticsearch: debug
-#    com.alibaba.druid: debug
+    #    org.springframework.data.elasticsearch: debug
+    #    com.alibaba.druid: debug
     org.elasticsearch.client: debug
     cloud.agileframework.elasticsearch.proxy.JdbcRequest: debug
 spring:

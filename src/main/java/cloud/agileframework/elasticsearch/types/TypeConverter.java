@@ -30,17 +30,15 @@ public interface TypeConverter {
      * This implements the aspect of the JDBC spec that specifies
      * multiple JDBCTypes on which a ResultSet getter method may be called.
      *
-     * @param <T> Type of the Java Class
-     * @param value Column value
-     * @param clazz Instance of the Class to which the value needs to be
-     *         converted
+     * @param <T>              Type of the Java Class
+     * @param value            Column value
+     * @param clazz            Instance of the Class to which the value needs to be
+     *                         converted
      * @param conversionParams Optional conversion parameters to use in
-     *         the conversion
-     *
+     *                         the conversion
      * @return Column value as an instance of type T
-     *
      * @throws SQLException if the conversion is not supported or the
-     *         conversion operation fails.
+     *                      conversion operation fails.
      */
     <T> T convert(Object value, Class<T> clazz, Map<String, Object> conversionParams) throws SQLException;
 

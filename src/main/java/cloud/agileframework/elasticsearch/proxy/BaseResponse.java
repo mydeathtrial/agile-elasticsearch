@@ -2,8 +2,6 @@ package cloud.agileframework.elasticsearch.proxy;
 
 import cloud.agileframework.elasticsearch.BaseStatement;
 
-import java.sql.Statement;
-
 public abstract class BaseResponse implements JdbcResponse {
     private BaseStatement statement;
 

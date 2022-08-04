@@ -55,11 +55,9 @@ public interface TypeHelper<T> {
     /**
      * Returns an Object as an equivalent instance of type T
      *
-     * @param value Object instance to convert
+     * @param value            Object instance to convert
      * @param conversionParams Optional parameters to use for conversion
-     *
      * @return instance of type T
-     *
      * @throws SQLException if there is a problem in carrying out the conversion
      */
     T fromValue(Object value, Map<String, Object> conversionParams) throws SQLException;

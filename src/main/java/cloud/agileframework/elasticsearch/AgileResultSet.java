@@ -66,7 +66,7 @@ public class AgileResultSet implements ResultSet {
     }
 
     public AgileResultSet(BaseStatement statement, List<Column> columnDescriptors,
-                         List<List<Object>> dataRows, Logger log) {
+                          List<List<Object>> dataRows, Logger log) {
         this.statement = statement;
         this.log = log;
 
@@ -74,7 +74,7 @@ public class AgileResultSet implements ResultSet {
         try {
             schema = new Cursor.Schema(columnDescriptors
                     .stream()
-                    .map(a->{
+                    .map(a -> {
                         try {
                             return new ColumnMetaData(a);
                         } catch (SQLFeatureNotSupportedException e) {
@@ -89,7 +89,7 @@ public class AgileResultSet implements ResultSet {
             this.open = true;
 
         } catch (Exception ex) {
-            log.error("AgileResultSet Error",new SQLException("Exception creating a ResultSet.", ex));
+            log.error("AgileResultSet Error", new SQLException("Exception creating a ResultSet.", ex));
         }
 
     }
@@ -241,10 +241,10 @@ public class AgileResultSet implements ResultSet {
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
-        log.debug("getBigDecimal({} {})",  columnIndex, scale);
+        log.debug("getBigDecimal({} {})", columnIndex, scale);
         checkCursorOperationPossible();
         BigDecimal value = getBigDecimalX(columnIndex, scale);
-        log.debug("getBigDecimal {}",  value);
+        log.debug("getBigDecimal {}", value);
         return value;
     }
 
@@ -419,8 +419,8 @@ public class AgileResultSet implements ResultSet {
         log.debug("getBytes({})", columnLabel);
         checkCursorOperationPossible();
         byte[] value = getBytesX(getColumnIndex(columnLabel));
-        log.debug("getBytes "+String.format("%s, length(%s)", value, value != null ? value.length : 0));
- 
+        log.debug("getBytes " + String.format("%s, length(%s)", value, value != null ? value.length : 0));
+
         return value;
     }
 
@@ -493,7 +493,7 @@ public class AgileResultSet implements ResultSet {
         log.debug("getObject({})", columnIndex);
         checkCursorOperationPossible();
         Object value = getObjectX(columnIndex);
-        log.debug("getObject "+(value != null ? "(" + value.getClass().getName() + ") " + value : "null"));
+        log.debug("getObject " + (value != null ? "(" + value.getClass().getName() + ") " + value : "null"));
         return value;
     }
 
@@ -502,7 +502,7 @@ public class AgileResultSet implements ResultSet {
         log.debug("getObject({})", columnLabel);
         checkCursorOperationPossible();
         Object value = getObjectX(getColumnIndex(columnLabel));
-        log.debug("getObject "+(value != null ? "(" + value.getClass().getName() + ") " + value : "null"));
+        log.debug("getObject " + (value != null ? "(" + value.getClass().getName() + ") " + value : "null"));
         return value;
     }
 
@@ -916,7 +916,7 @@ public class AgileResultSet implements ResultSet {
 
     @Override
     public Object getObject(int columnIndex, Map<String, Class<?>> map) throws SQLException {
-        log.debug("getObject({}, {})",  columnIndex, map);
+        log.debug("getObject({}, {})", columnIndex, map);
         Object value = getObjectX(columnIndex, map);
 
         log.debug("getObject({})", value);
@@ -945,9 +945,9 @@ public class AgileResultSet implements ResultSet {
 
     @Override
     public Object getObject(String columnLabel, Map<String, Class<?>> map) throws SQLException {
-        log.debug("getObject({}, {})",  columnLabel, map);
+        log.debug("getObject({}, {})", columnLabel, map);
         Object value = getObjectX(getColumnIndex(columnLabel), map);
-        log.debug("getObject({})",  value);
+        log.debug("getObject({})", value);
         return value;
     }
 
@@ -988,19 +988,19 @@ public class AgileResultSet implements ResultSet {
 
     @Override
     public Date getDate(int columnIndex, Calendar cal) throws SQLException {
-        log.debug("getDate({}, {})",  columnIndex, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
+        log.debug("getDate({}, {})", columnIndex, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
         checkCursorOperationPossible();
         Date value = getDateX(columnIndex, cal);
-        log.debug("getDate({})",  value);
+        log.debug("getDate({})", value);
         return value;
     }
 
     @Override
     public Date getDate(String columnLabel, Calendar cal) throws SQLException {
-        log.debug("getDate({}, {})",  columnLabel, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
+        log.debug("getDate({}, {})", columnLabel, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
         checkCursorOperationPossible();
         Date value = getDateX(getColumnIndex(columnLabel), cal);
-        log.debug("getDate({})",  value);
+        log.debug("getDate({})", value);
         return value;
     }
 
@@ -1018,21 +1018,21 @@ public class AgileResultSet implements ResultSet {
 
     @Override
     public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
-        log.debug("getTimestamp({}, {})",  columnIndex, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
+        log.debug("getTimestamp({}, {})", columnIndex, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
 
         checkCursorOperationPossible();
         Timestamp value = getTimestampX(columnIndex, cal);
-        log.debug("getTimestamp({})",  value);
+        log.debug("getTimestamp({})", value);
         return value;
     }
 
     @Override
     public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
-        log.debug("getTimestamp({}, {})",  columnLabel, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
+        log.debug("getTimestamp({}, {})", columnLabel, (cal == null ? "null" : "Calendar TZ= " + cal.getTimeZone()));
 
         checkCursorOperationPossible();
         Timestamp value = getTimestampX(getColumnIndex(columnLabel), cal);
-        log.debug("getTimestamp({})",  value);
+        log.debug("getTimestamp({})", value);
         return value;
     }
 
@@ -1171,17 +1171,17 @@ public class AgileResultSet implements ResultSet {
 
     @Override
     public String getNString(int columnIndex) throws SQLException {
-        log.debug("getNString({})",  columnIndex);
+        log.debug("getNString({})", columnIndex);
         String value = getStringX(columnIndex);
-        log.debug("getNString({})",  value);
+        log.debug("getNString({})", value);
         return value;
     }
 
     @Override
     public String getNString(String columnLabel) throws SQLException {
-        log.debug("getNString({})",  columnLabel);
+        log.debug("getNString({})", columnLabel);
         String value = getStringX(getColumnIndex(columnLabel));
-        log.debug("getNString({})",  value);
+        log.debug("getNString({})", value);
         return value;
     }
 
@@ -1355,7 +1355,7 @@ public class AgileResultSet implements ResultSet {
         Integer index = cursor.findColumn(columnLabel);
 
         if (index == null)
-            log.error("AgileResultSet Error",new SQLDataException("Column '" + columnLabel + "' not found."));
+            log.error("AgileResultSet Error", new SQLDataException("Column '" + columnLabel + "' not found."));
 
         // +1 to adjust for JDBC indices that start from 1
         return index + 1;
@@ -1380,7 +1380,7 @@ public class AgileResultSet implements ResultSet {
 
     protected void checkColumnIndex(int columnIndex) throws SQLException {
         if (columnIndex < 1 || columnIndex > cursor.getColumnCount())
-            log.error("AgileResultSet Error",new SQLDataException("Column index out of range."));
+            log.error("AgileResultSet Error", new SQLDataException("Column index out of range."));
     }
 
     protected void checkCursorOperationPossible() throws SQLException {
@@ -1390,15 +1390,15 @@ public class AgileResultSet implements ResultSet {
 
     protected void checkOpen() throws SQLException {
         if (isClosed()) {
-            log.error("AgileResultSet Error",new SQLException("ResultSet closed."));
+            log.error("AgileResultSet Error", new SQLException("ResultSet closed."));
         }
     }
 
     private void checkValidCursorPosition() throws SQLException {
         if (isBeforeFirstX())
-            log.error("AgileResultSet Error",new SQLNonTransientException("Illegal operation before start of ResultSet."));
+            log.error("AgileResultSet Error", new SQLNonTransientException("Illegal operation before start of ResultSet."));
         else if (isAfterLastX())
-            log.error("AgileResultSet Error",new SQLNonTransientException("Illegal operation before start of ResultSet."));
+            log.error("AgileResultSet Error", new SQLNonTransientException("Illegal operation before start of ResultSet."));
     }
 
     private SQLException updatesNotSupportedException() {

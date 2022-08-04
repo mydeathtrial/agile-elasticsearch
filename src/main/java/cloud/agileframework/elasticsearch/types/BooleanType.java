@@ -26,7 +26,7 @@ public class BooleanType implements TypeHelper<Boolean> {
     private BooleanType() {
 
     }
-    
+
     @Override
     public Boolean fromValue(Object value, Map<String, Object> conversionParams) throws SQLException {
         if (value == null) {

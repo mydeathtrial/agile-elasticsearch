@@ -80,11 +80,11 @@ public class TestSpringDataEs {
         Assertions.assertEquals(one.getName(), name);
         Assertions.assertEquals(one.getAge(), 12);
         Assertions.assertEquals(one.getSex(), false);
-        
+
     }
-    
+
     @Test
-    public void findOne(){
+    public void findOne() {
         esDao.deleteAll(Persons.class);
         String id = UUID.randomUUID().toString();
         String name = "xxx";
@@ -94,7 +94,7 @@ public class TestSpringDataEs {
                 .age(11)
                 .build());
 
-        Assertions.assertEquals(esDao.findOne("select name from persons7 where id = #{id}",String.class,Persons.builder().id(id).build()), name);
+        Assertions.assertEquals(esDao.findOne("select name from persons7 where id = #{id}", String.class, Persons.builder().id(id).build()), name);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class TestSpringDataEs {
         esDao.batchInsert(list);
 
         Thread.sleep(2000);
-        Assertions.assertEquals((long) esDao.findAllByClass(Persons.class).size(), total*2);
+        Assertions.assertEquals((long) esDao.findAllByClass(Persons.class).size(), total * 2);
     }
 
     /**
@@ -163,7 +163,7 @@ public class TestSpringDataEs {
         esDao.save(Persons.builder().name("xxx").sex(true).age(16).build());
         List<Persons> a = esDao.findAll(Persons.builder().name("xxx").sex(true).age(16).build());
         Assertions.assertFalse(a.isEmpty());
-        Assertions.assertEquals(a.get(0).getName(),"xxx");
+        Assertions.assertEquals(a.get(0).getName(), "xxx");
     }
 
     /**
@@ -173,7 +173,7 @@ public class TestSpringDataEs {
     public void findAllByClass() throws InterruptedException {
         saveBatch();
         List<Persons> l = esDao.findAllByClass(Persons.class);
-        Assertions.assertEquals(l.size(),200);
+        Assertions.assertEquals(l.size(), 200);
     }
 
     /**
@@ -182,13 +182,13 @@ public class TestSpringDataEs {
     @Test
     public void pageBySQL() throws InterruptedException {
         AtomicInteger count = new AtomicInteger();
-       IntStream.range(0,1000).forEach(i->{
+        IntStream.range(0, 1000).forEach(i -> {
 //           new Thread(()->{
-               Page<Persons> data = esDao.pageBySQL("select * from persons7 where sex = #{sex}", 1, 100, Persons.class, Persons.builder().sex(true).build());
-               System.out.println("-------cha--------"+data.getTotalElements());
+            Page<Persons> data = esDao.pageBySQL("select * from persons7 where sex = #{sex}", 1, 100, Persons.class, Persons.builder().sex(true).build());
+            System.out.println("-------cha--------" + data.getTotalElements());
 //           }).start();
-           count.getAndIncrement();
-       });
+            count.getAndIncrement();
+        });
 //       Thread.sleep(40000);
     }
 }

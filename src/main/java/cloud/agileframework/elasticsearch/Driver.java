@@ -60,12 +60,12 @@ public class Driver implements java.sql.Driver {
                 throw new RuntimeException(e);
             }
         }
-        
+
         return new ConnectionEnhanceImpl(RestClients.create(builder.build()).lowLevelRest(),
                 url,
                 info);
     }
-    
+
     @Override
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
         // TODO - implement this?

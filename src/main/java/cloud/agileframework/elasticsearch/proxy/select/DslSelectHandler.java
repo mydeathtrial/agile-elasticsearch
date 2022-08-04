@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 public class DslSelectHandler implements SqlParseProvider<SelectResponse, SQLSelectStatement> {
     public JdbcRequest of(SQLSelectStatement statement) {
         JSONObject json = new JSONObject();
-        
+
         json.put("from", statement.toString());
         json.put("size", statement.toString());
         json.put("query", statement.toString());

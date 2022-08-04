@@ -46,7 +46,7 @@ public class TimestampType implements TypeHelper<Timestamp> {
         } else if (value instanceof String) {
             return asTimestamp((String) value, calendar);
         } else if (value instanceof Number) {
-           return asTimestamp((Number) value);
+            return asTimestamp((Number) value);
         } else {
             throw objectConversionException(value);
         }
@@ -61,9 +61,9 @@ public class TimestampType implements TypeHelper<Timestamp> {
     }
 
     private Timestamp localDateTimeToTimestamp(LocalDateTime ldt, Calendar calendar) {
-        calendar.set(ldt.getYear(), ldt.getMonthValue()-1, ldt.getDayOfMonth(),
+        calendar.set(ldt.getYear(), ldt.getMonthValue() - 1, ldt.getDayOfMonth(),
                 ldt.getHour(), ldt.getMinute(), ldt.getSecond());
-        calendar.set(Calendar.MILLISECOND, ldt.getNano()/1000000);
+        calendar.set(Calendar.MILLISECOND, ldt.getNano() / 1000000);
 
         return new Timestamp(calendar.getTimeInMillis());
     }
@@ -78,8 +78,7 @@ public class TimestampType implements TypeHelper<Timestamp> {
             if (value.length() > 23) {
                 if (value.length() == 24 && value.charAt(23) == 'Z') {
                     value = value.substring(0, 23);
-                }
-                else if (value.charAt(23) == '+' || value.charAt(23) == '-') {
+                } else if (value.charAt(23) == '+' || value.charAt(23) == '-') {
                     // 'calendar' parameter takes precedence
                     if (calendar == null) {
                         calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT" + value.substring(23)));

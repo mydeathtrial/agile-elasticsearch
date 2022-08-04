@@ -20,7 +20,7 @@ public interface SqlParseProvider<P extends JdbcResponse, S extends SQLStatement
      * @param statement sql语法快
      * @return 请求体
      */
-    default JdbcRequest of(S statement) throws SQLFeatureNotSupportedException{
+    default JdbcRequest of(S statement) throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -30,7 +30,7 @@ public interface SqlParseProvider<P extends JdbcResponse, S extends SQLStatement
      * @param statement sql语法快
      * @return 请求体
      */
-    default JdbcRequest of(List<S> statement) throws SQLFeatureNotSupportedException{
+    default JdbcRequest of(List<S> statement) throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -45,12 +45,12 @@ public interface SqlParseProvider<P extends JdbcResponse, S extends SQLStatement
         return ((Class<?>) clazz).isAssignableFrom(statement.getClass());
     }
 
-    default P toResponse(BaseStatement statement,InputStream contentStream) {
+    default P toResponse(BaseStatement statement, InputStream contentStream) {
         Type clazz = ClassUtil.getGeneric(getClass(), SqlParseProvider.class, 0);
         TypeReference<P> toClass = new TypeReference<>(clazz);
         P r = ObjectUtil.to(StreamUtil.toString(contentStream), toClass);
-        if(r instanceof BaseResponse){
-            ((BaseResponse)r).setStatement(statement);
+        if (r instanceof BaseResponse) {
+            ((BaseResponse) r).setStatement(statement);
         }
         return r;
     }

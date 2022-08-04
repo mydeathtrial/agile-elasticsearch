@@ -15,7 +15,6 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SchemaStatVisitor;
-import com.google.common.collect.Sets;
 import lombok.Builder;
 import lombok.Data;
 import org.elasticsearch.client.Request;
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 @Data

@@ -182,13 +182,12 @@ public enum ElasticsearchType {
      * Parses a specified Elasticsearch type name to determine
      * the corresponding {@link ElasticsearchType}
      *
-     * @param typeName The Elasticsearch Type name to parse
+     * @param typeName           The Elasticsearch Type name to parse
      * @param errorOnUnknownType If true, the method throws an
-     *         {@link UnrecognizedElasticsearchTypeException}
-     *         if the type name specified is not recognized.
-     *
+     *                           {@link UnrecognizedElasticsearchTypeException}
+     *                           if the type name specified is not recognized.
      * @return the {@link ElasticsearchType} value corresponding to the
-     *         specified type name
+     * specified type name
      */
     public static ElasticsearchType fromTypeName(String typeName, boolean errorOnUnknownType) {
         try {

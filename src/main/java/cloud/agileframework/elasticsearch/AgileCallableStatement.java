@@ -2,7 +2,6 @@ package cloud.agileframework.elasticsearch;
 
 import cloud.agileframework.elasticsearch.proxy.JdbcRequest;
 import cloud.agileframework.elasticsearch.proxy.JdbcResponse;
-import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +12,6 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Clob;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.ParameterMetaData;
@@ -30,7 +28,7 @@ import java.util.Map;
 
 public class AgileCallableStatement extends BaseStatement implements CallableStatement {
     private String sql;
-    
+
     protected AgileCallableStatement(ConnectionEnhanceImpl connection) {
         super(connection);
     }
@@ -42,7 +40,7 @@ public class AgileCallableStatement extends BaseStatement implements CallableSta
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
-        
+
     }
 
     @Override

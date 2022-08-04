@@ -32,7 +32,7 @@ import java.util.Set;
  * TypeConverter instances here provide utility functions
  * to retrieve the values in these columns as instances
  * of specified Java classes.
- *
+ * <p>
  * These conversions are needed for example when ResultSet.getString()
  * is invoked on a column that is internally a JDBCType.FLOAT or
  * ResultSet.getFloat() is invoked on a column that is internally a
@@ -119,9 +119,9 @@ public class TypeConverters {
     public static class TimeTypeConverter extends BaseTypeConverter {
 
         private static final Set<Class> supportedJavaClasses = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                String.class, Time.class
-            )));
+                new HashSet<>(Arrays.asList(
+                        String.class, Time.class
+                )));
 
         private TimeTypeConverter() {
 
@@ -229,9 +229,9 @@ public class TypeConverters {
     public static class BinaryTypeConverter extends BaseTypeConverter {
 
         private static final Set<Class> supportedJavaClasses = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                String.class
-            )));
+                new HashSet<>(Arrays.asList(
+                        String.class
+                )));
 
         @Override
         public Class getDefaultJavaClass() {

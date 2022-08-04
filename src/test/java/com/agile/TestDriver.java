@@ -14,14 +14,13 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 public class TestDriver {
     public static int execut(Connection connection, String sql, Object param) {
         try (
                 Statement statement = connection.createStatement();
         ) {
-            return statement.executeUpdate(SqlUtil.parserSQLByType(DbType.elastic_search,sql,param));
+            return statement.executeUpdate(SqlUtil.parserSQLByType(DbType.elastic_search, sql, param));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,11 +69,11 @@ public class TestDriver {
         System.out.println(c);
         con.close();
     }
-    
+
     @Test
-    public void test2(){
+    public void test2() {
         SQLStatement select = SQLUtils.parseSingleStatement("select * from user_table a where a.age=1", DbType.mysql);
-        new SQLBinaryOpExpr(SQLUtils.toSQLExpr("A.co"), SQLBinaryOperator.Equality,SQLUtils.toSQLExpr("A.co"));
+        new SQLBinaryOpExpr(SQLUtils.toSQLExpr("A.co"), SQLBinaryOperator.Equality, SQLUtils.toSQLExpr("A.co"));
         System.out.println(select);
     }
 }

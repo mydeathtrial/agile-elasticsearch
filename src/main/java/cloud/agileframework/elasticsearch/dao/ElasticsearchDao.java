@@ -211,6 +211,6 @@ public class ElasticsearchDao implements BaseDao {
         int count = updateBySQL(sql);
         return count != 0;
     }
-    
-    
+
+
 }

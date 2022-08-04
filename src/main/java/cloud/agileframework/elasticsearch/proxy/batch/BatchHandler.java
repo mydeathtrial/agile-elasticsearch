@@ -24,7 +24,7 @@ public class BatchHandler implements SqlParseProvider<BatchResponse, SQLInsertSt
         return JdbcRequest.builder()
                 .url("_bulk")
                 .method(RequestMethod.POST)
-                .body(body+"\n")
+                .body(body + "\n")
                 .handler(this)
                 .build();
     }

@@ -51,67 +51,67 @@ public class AgileResultSetMetaDataImpl implements ResultSetMetaData {
     @Override
     public boolean isSigned(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getEsType().isSigned();
+        return schema.getColumnMetaData(column - 1).getEsType().isSigned();
     }
 
     @Override
     public int getColumnDisplaySize(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getEsType().getDisplaySize();
+        return schema.getColumnMetaData(column - 1).getEsType().getDisplaySize();
     }
 
     @Override
     public String getColumnLabel(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getLabel();
+        return schema.getColumnMetaData(column - 1).getLabel();
     }
 
     @Override
     public String getColumnName(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getName();
+        return schema.getColumnMetaData(column - 1).getName();
     }
 
     @Override
     public String getSchemaName(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getTableSchemaName();
+        return schema.getColumnMetaData(column - 1).getTableSchemaName();
     }
 
     @Override
     public int getPrecision(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getPrecision();
+        return schema.getColumnMetaData(column - 1).getPrecision();
     }
 
     @Override
     public int getScale(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getScale();
+        return schema.getColumnMetaData(column - 1).getScale();
     }
 
     @Override
     public String getTableName(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getTableName();
+        return schema.getColumnMetaData(column - 1).getTableName();
     }
 
     @Override
     public String getCatalogName(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getColumnMetaData(column-1).getCatalogName();
+        return schema.getColumnMetaData(column - 1).getCatalogName();
     }
 
     @Override
     public int getColumnType(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getElasticsearchType(column-1).getJdbcType().getVendorTypeNumber();
+        return schema.getElasticsearchType(column - 1).getJdbcType().getVendorTypeNumber();
     }
 
     @Override
     public String getColumnTypeName(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getElasticsearchType(column-1).getJdbcType().getName();
+        return schema.getElasticsearchType(column - 1).getJdbcType().getName();
     }
 
     @Override
@@ -135,7 +135,7 @@ public class AgileResultSetMetaDataImpl implements ResultSetMetaData {
     @Override
     public String getColumnClassName(int column) throws SQLException {
         checkAccessible(column);
-        return schema.getElasticsearchType(column-1).getJavaClassName();
+        return schema.getElasticsearchType(column - 1).getJavaClassName();
     }
 
     private void checkAccessible(int columnIndex) throws SQLException {

@@ -31,22 +31,22 @@ public class ConnectionEnhanceImpl implements Connection {
     private final AgileDatabaseMetaData databaseMetaData;
 
 
-    private boolean               autoCommit = true;
-    private String                catalog;
-    private int                   transactionIsolation;
-    private int                   holdability;
-    private Map<String, Class<?>> typeMap    = new HashMap<>();
-    private SQLWarning            warnings;
-    private boolean               readOnly;
+    private boolean autoCommit = true;
+    private String catalog;
+    private int transactionIsolation;
+    private int holdability;
+    private Map<String, Class<?>> typeMap = new HashMap<>();
+    private SQLWarning warnings;
+    private boolean readOnly;
 
-    private String                url;
-    private Properties            info;
+    private String url;
+    private Properties info;
 
-    public ConnectionEnhanceImpl(RestClient restClient, String url, Properties info){
+    public ConnectionEnhanceImpl(RestClient restClient, String url, Properties info) {
         this.restClient = restClient;
         this.url = url;
         this.info = info;
-        databaseMetaData = new AgileDatabaseMetaData(info,url);
+        databaseMetaData = new AgileDatabaseMetaData(info, url);
     }
 
     public String getUrl() {
@@ -68,14 +68,14 @@ public class ConnectionEnhanceImpl implements Connection {
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         checkState();
 
-        return new AgilePreparedStatement(this,sql);
+        return new AgilePreparedStatement(this, sql);
     }
 
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
         checkState();
 
-        return new AgileCallableStatement(this,sql);
+        return new AgileCallableStatement(this, sql);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class ConnectionEnhanceImpl implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        AgilePreparedStatement statement = new AgilePreparedStatement(this,sql);
+        AgilePreparedStatement statement = new AgilePreparedStatement(this, sql);
         statement.setResultSetType(resultSetType);
         statement.setResultSetConcurrency(resultSetConcurrency);
         return statement;
@@ -177,7 +177,7 @@ public class ConnectionEnhanceImpl implements Connection {
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        AgileCallableStatement statement = new AgileCallableStatement(this,sql);
+        AgileCallableStatement statement = new AgileCallableStatement(this, sql);
         statement.setResultSetType(resultSetType);
         statement.setResultSetConcurrency(resultSetConcurrency);
         return statement;
@@ -237,7 +237,7 @@ public class ConnectionEnhanceImpl implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        AgilePreparedStatement statement = new AgilePreparedStatement(this,sql);
+        AgilePreparedStatement statement = new AgilePreparedStatement(this, sql);
         statement.setResultSetType(resultSetType);
         statement.setResultSetConcurrency(resultSetConcurrency);
         statement.setResultSetHoldability(resultSetHoldability);
@@ -246,7 +246,7 @@ public class ConnectionEnhanceImpl implements Connection {
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        AgileCallableStatement statement = new AgileCallableStatement(this,sql);
+        AgileCallableStatement statement = new AgileCallableStatement(this, sql);
         statement.setResultSetType(resultSetType);
         statement.setResultSetConcurrency(resultSetConcurrency);
         statement.setResultSetHoldability(resultSetHoldability);

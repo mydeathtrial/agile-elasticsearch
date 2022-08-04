@@ -24,6 +24,6 @@ public class OpendistroSelectResponse extends BaseResponse {
 
     @Override
     public ResultSet resultSet() {
-        return new AgileResultSet(getStatement(),schema,datarows, LoggerFactory.getLogger(OpendistroSelectResponse.class));
+        return new AgileResultSet(getStatement(), schema, datarows, LoggerFactory.getLogger(OpendistroSelectResponse.class));
     }
 }

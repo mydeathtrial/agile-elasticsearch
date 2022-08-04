@@ -2,12 +2,8 @@ package cloud.agileframework.elasticsearch;
 
 import cloud.agileframework.elasticsearch.proxy.JdbcRequest;
 import cloud.agileframework.elasticsearch.proxy.JdbcResponse;
-import com.alibaba.druid.mock.MockConnection;
-import com.alibaba.druid.mock.MockConnectionClosedException;
-import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -16,26 +12,26 @@ import java.sql.Statement;
 
 public abstract class BaseStatement implements Statement {
 
-    private ConnectionEnhanceImpl  connection;
-    private int         fetchDirection;
-    private int         fetchSize;
-    private int         resultSetType;
-    private int         resultSetConcurrency;
-    private int         resultSetHoldability;
-    private int         maxFieldSize;
-    private int         maxRows;
-    private int         queryTimeout;
-    private boolean     escapeProcessing;
-    private String      cursorName;
-    private SQLWarning  warnings;
-    private int         updateCount;
-    protected boolean   closed = false;
-    private boolean     poolable;
+    private ConnectionEnhanceImpl connection;
+    private int fetchDirection;
+    private int fetchSize;
+    private int resultSetType;
+    private int resultSetConcurrency;
+    private int resultSetHoldability;
+    private int maxFieldSize;
+    private int maxRows;
+    private int queryTimeout;
+    private boolean escapeProcessing;
+    private String cursorName;
+    private SQLWarning warnings;
+    private int updateCount;
+    protected boolean closed = false;
+    private boolean poolable;
 
     protected ResultSet generatedKeys;
     protected ResultSet resultSet;
 
-    public BaseStatement(ConnectionEnhanceImpl connection){
+    public BaseStatement(ConnectionEnhanceImpl connection) {
         super();
         this.connection = connection;
     }

@@ -48,7 +48,7 @@ public class Cursor {
 
     private void initLabelToIndexMap() {
         labelToIndexMap = new HashMap<>();
-        for (int i=0; i < schema.getNumberOfColumns(); i++) {
+        for (int i = 0; i < schema.getNumberOfColumns(); i++) {
             ColumnMetaData columnMetaData = schema.getColumnMetaData(i);
             labelToIndexMap.put(columnMetaData.getLabel(), i);
         }
@@ -86,7 +86,6 @@ public class Cursor {
          * Returns {@link ColumnMetaData} for a specific column in the result
          *
          * @param index the index of the column to return metadata for
-         *
          * @return {@link ColumnMetaData} for the specified column
          */
         public ColumnMetaData getColumnMetaData(int index) {
@@ -98,7 +97,6 @@ public class Cursor {
          * column in the result.
          *
          * @param index the index of the column to return the type for
-         *
          * @return {@link ElasticsearchType} for the specified column
          */
         public ElasticsearchType getElasticsearchType(int index) {

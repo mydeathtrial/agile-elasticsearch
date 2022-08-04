@@ -24,15 +24,13 @@ public abstract class NumberType<T> implements TypeHelper<T> {
      * Returns a {@link Number} type value as a {@link Double} if it falls
      * within a specified min and max range.
      *
-     * @param value Number value to parse
+     * @param value    Number value to parse
      * @param minValue minimum value possible
      * @param maxValue maximum value possible
-     *
      * @return The double value corresponding to the specified Number if
-     *         it falls within the specified min and max range.
-     *
+     * it falls within the specified min and max range.
      * @throws SQLException If the double value is outside the possible
-     *         range specified
+     *                      range specified
      */
     double getDoubleValueWithinBounds(Number value, double minValue, double maxValue) throws SQLException {
         double doubleValue = value.doubleValue();

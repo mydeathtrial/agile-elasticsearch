@@ -48,7 +48,7 @@ public class ColumnMetaData {
     }
 
     public int getPrecision() {
-        return  precision;
+        return precision;
     }
 
     public int getScale() {
