@@ -9,7 +9,6 @@ import com.alibaba.druid.DbType;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
@@ -60,9 +59,8 @@ public class ElasticsearchDao implements BaseDao {
         return pagingAndSortingRepository;
     }
 
-    @SneakyThrows
     @Override
-    public Connection getConnection() {
+    public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
@@ -206,7 +204,7 @@ public class ElasticsearchDao implements BaseDao {
     }
 
     @Override
-    public <T> boolean update(T o) throws NoSuchFieldException, IllegalAccessException {
+    public <T> boolean update(T o) {
         String sql = toUpdateSql(o, DbType.mysql);
         int count = updateBySQL(sql);
         return count != 0;

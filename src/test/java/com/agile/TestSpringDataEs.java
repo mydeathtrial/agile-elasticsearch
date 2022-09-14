@@ -1,5 +1,7 @@
 package com.agile;
 
+import cloud.agileframework.common.DataException;
+import cloud.agileframework.dictionary.util.TranslateException;
 import cloud.agileframework.elasticsearch.config.ElasticsearchDaoAutoConfiguration;
 import cloud.agileframework.elasticsearch.dao.ElasticsearchDao;
 import com.alibaba.druid.DbType;
@@ -61,7 +63,7 @@ public class TestSpringDataEs {
     }
 
     @Test
-    public void update() throws NoSuchFieldException, IllegalAccessException {
+    public void update() {
         esDao.deleteAll(Persons.class);
         String id = UUID.randomUUID().toString();
         String name = "xxx";
@@ -98,7 +100,7 @@ public class TestSpringDataEs {
     }
 
     @Test
-    public void saveAll() throws InterruptedException {
+    public void saveAll() throws InterruptedException, TranslateException {
         esDao.deleteAll(Persons.class);
         int total = 200;
         //插入数据
@@ -115,7 +117,7 @@ public class TestSpringDataEs {
     }
 
     @Test
-    public void saveBatch() throws InterruptedException {
+    public void saveBatch() throws InterruptedException, TranslateException {
         esDao.deleteAll(Persons.class);
         int total = 100;
         //插入数据
@@ -145,7 +147,7 @@ public class TestSpringDataEs {
      * sql分页
      */
     @Test
-    public void test() throws InterruptedException {
+    public void test() throws InterruptedException, TranslateException {
         saveBatch();
         Page<Persons> page = esDao.page(Persons.builder().sex(true).build(), 2, 10);
         Assertions.assertNotNull(page);
@@ -158,7 +160,7 @@ public class TestSpringDataEs {
      * 自动化条件查询
      */
     @Test
-    public void findAll() throws InterruptedException {
+    public void findAll() throws InterruptedException, DataException {
         saveBatch();
         esDao.save(Persons.builder().name("xxx").sex(true).age(16).build());
         List<Persons> a = esDao.findAll(Persons.builder().name("xxx").sex(true).age(16).build());
@@ -170,7 +172,7 @@ public class TestSpringDataEs {
      * 自动化条件查询
      */
     @Test
-    public void findAllByClass() throws InterruptedException {
+    public void findAllByClass() throws InterruptedException, TranslateException {
         saveBatch();
         List<Persons> l = esDao.findAllByClass(Persons.class);
         Assertions.assertEquals(l.size(), 200);
@@ -180,15 +182,15 @@ public class TestSpringDataEs {
      * 自动化条件查询
      */
     @Test
-    public void pageBySQL() throws InterruptedException {
+    public void pageBySQL() {
         AtomicInteger count = new AtomicInteger();
-        IntStream.range(0, 1000).forEach(i -> {
+        for (int i = 0; i < 1000; i++) {
 //           new Thread(()->{
             Page<Persons> data = esDao.pageBySQL("select * from persons7 where sex = #{sex}", 1, 100, Persons.class, Persons.builder().sex(true).build());
             System.out.println("-------cha--------" + data.getTotalElements());
 //           }).start();
             count.getAndIncrement();
-        });
+        }
 //       Thread.sleep(40000);
     }
 }
