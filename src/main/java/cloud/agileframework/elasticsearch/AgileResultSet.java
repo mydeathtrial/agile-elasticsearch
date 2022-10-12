@@ -109,7 +109,7 @@ public class AgileResultSet implements ResultSet {
 
     private List<Cursor.Row> getRowsFromDataRows(List<List<Object>> dataRows) {
         return dataRows
-                .parallelStream()
+                .stream()
                 .map(Cursor.Row::new)
                 .collect(Collectors.toList());
     }
