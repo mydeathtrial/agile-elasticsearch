@@ -3,12 +3,14 @@ package cloud.agileframework.elasticsearch.proxy;
 import cloud.agileframework.common.util.clazz.ClassUtil;
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.object.ObjectUtil;
-import cloud.agileframework.common.util.stream.StreamUtil;
 import cloud.agileframework.elasticsearch.BaseStatement;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
 
@@ -45,10 +47,10 @@ public interface SqlParseProvider<P extends JdbcResponse, S extends SQLStatement
         return ((Class<?>) clazz).isAssignableFrom(statement.getClass());
     }
 
-    default P toResponse(BaseStatement statement, InputStream contentStream) {
+    default P toResponse(BaseStatement statement, InputStream contentStream) throws IOException {
         Type clazz = ClassUtil.getGeneric(getClass(), SqlParseProvider.class, 0);
         TypeReference<P> toClass = new TypeReference<>(clazz);
-        P r = ObjectUtil.to(StreamUtil.toString(contentStream), toClass);
+        P r = ObjectUtil.to(IOUtils.toString(contentStream, Charset.defaultCharset()), toClass);
         if (r instanceof BaseResponse) {
             ((BaseResponse) r).setStatement(statement);
         }
